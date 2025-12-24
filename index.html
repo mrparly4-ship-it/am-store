@@ -739,22 +739,32 @@ document.getElementById("order-form").addEventListener("submit", function(e) {
     .classList.remove("hidden");
 });
 });
-    fetch("https://script.google.com/macros/s/AKfycbxoF_KlUBGdheCDq3Bp0eeaNTFOZckVUT38dNEwzwpmiFae6F-c2nkCRy-NLLuD7xZ-MA/exec", {
-    method: "POST",
-      headers: {
-          "Content-Type": "application/json"
-            },
-              body: JSON.stringify({
-                  name: name,
-                      phone: phone
-                        })
-                        })
-                        .then(() => {
-                          console.log("تم تسجيل الطلب في Google Sheet");
-                          })
-                          .catch(err => {
-                            console.error("خطأ في التسجيل", err);
 })
+});
+fetch("https://script.google.com/macros/s/AKfycby56N27P5JudHis4CR0auWwx_2zeC88dlemwMTksq--W3B3D0LZoz6k3MgE_eI_36jq0w/exec", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    name: name,
+    phone: phone
+  })
+})
+.then(res => res.json())
+.then(result => {
+  const orderCount = result.count;
+
+  const finalMessage = message + `\n🔁 عدد مرات الطلب: ${orderCount}`;
+
+  CHAT_IDS.forEach(chatId => {
+    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: finalMessage
+      })
+    });
+  });
 });
     // تهيئة التطبيق عند التحميل  
     window.onload = function () {
@@ -785,3 +795,4 @@ document.getElementById("order-form").addEventListener("submit", function(e) {
 </body>
 
 </html>
+
