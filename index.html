@@ -739,6 +739,22 @@ document.getElementById("order-form").addEventListener("submit", function(e) {
     .classList.remove("hidden");
 });
 });
+    fetch("https://script.google.com/macros/s/AKfycbxoF_KlUBGdheCDq3Bp0eeaNTFOZckVUT38dNEwzwpmiFae6F-c2nkCRy-NLLuD7xZ-MA/exec", {
+    method: "POST",
+      headers: {
+          "Content-Type": "application/json"
+            },
+              body: JSON.stringify({
+                  name: name,
+                      phone: phone
+                        })
+                        })
+                        .then(() => {
+                          console.log("تم تسجيل الطلب في Google Sheet");
+                          })
+                          .catch(err => {
+                            console.error("خطأ في التسجيل", err);
+})
 });
     // تهيئة التطبيق عند التحميل  
     window.onload = function () {
@@ -767,4 +783,5 @@ document.getElementById("order-form").addEventListener("submit", function(e) {
   ✅ تم استلام طلبك، سوف نتواصل معك في أقرب وقت
 </div>
 </body>
+
 </html>
