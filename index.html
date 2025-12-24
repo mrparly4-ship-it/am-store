@@ -710,48 +710,42 @@ document.getElementById("order-form").addEventListener("submit", function(e) {
   const colorName =
     document.getElementById("selected-color-input")?.value || "غير محدد";
 
-  const message = `
-🛒 طلب جديد am store 
-----------------------------------------------------------------
-|📦 المنتج: ${currentSelectedProduct.name}
-|🎨 اللون: ${colorName}
-|👤 الاسم: ${name}
-|📞 الهاتف: ${phone}
-|📍 الولاية: ${wilaya}
-|🏠 البلدية: ${baladiya}
-|🔁 عدد الطلبات: ${orderCount}
-|💰 المجموع: ${totalPrice} DZD                                 
-----------------------------------------------------------------
-`;
-    fetch("https://script.google.com/macros/s/AKfycbxIYpLMG1zU8kI1N7iSrijAzPEYp4YaIlpsVipDZk5HJCiGuOLj-bOxf070blPdm_dgSQ/exec", {
+ fetch("https://script.google.com/macros/s/AKfycbxIYpLMG1zU8kI1N7iSrijAzPEYp4YaIlpsVipDZk5HJCiGuOLj-bOxf070blPdm_dgSQ/exec", {
   method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    name: name,
-    phone: phone
-  })
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ name, phone })
 })
-.catch(err => console.error("Sheet error", err));
+.then(res => res.json())
+.then(data => {
+  const orderCount = data.orderCount; // ✅ هنا تعرّف
+
+  const message = `
+🛒 طلب جديد am store
+--------------------------------
+📦 المنتج: ${currentSelectedProduct.name}
+🎨 اللون: ${colorName}
+👤 الاسم: ${name}
+📞 الهاتف: ${phone}
+📍 الولاية: ${wilaya}
+🏠 البلدية: ${baladiya}
+🔁 عدد الطلبات: ${orderCount}
+💰 المجموع: ${totalPrice} DZD
+--------------------------------
+`;
+
   CHAT_IDS.forEach(chatId => {
-  fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      chat_id: chatId,
-      text: message
-    })
-  })
-   .then(res => res.json())
- .then(data => {
+    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: message
+      })
+    });
+  });
+
   document.getElementById("success-message")
     .classList.remove("hidden");
-});
-});
-})
 });
     // تهيئة التطبيق عند التحميل  
     window.onload = function () {
@@ -782,5 +776,6 @@ document.getElementById("order-form").addEventListener("submit", function(e) {
 </body>
 
 </html>
+
 
 
