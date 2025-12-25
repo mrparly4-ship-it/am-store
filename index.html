@@ -463,6 +463,7 @@ console.log(data);
                                                                           code: color
                                                                               }))
                                                                                 : []
+                                                                                
                                                                                         }));
 
                                                                                             renderProductGallery();
@@ -647,7 +648,7 @@ console.log(data);
     option.value = wilaya.code;               // يبقى الكود كما هو
     option.dataset.shipping = wilaya.shipping;
 
-   
+    // ✅ اسم الولاية + ترقيم من 1 إلى 58
     option.textContent = `${counter} - ${wilaya.name}`;
 
     wilayaSelect.appendChild(option);
@@ -710,62 +711,41 @@ document.getElementById("order-form").addEventListener("submit", function(e) {
   const colorName =
     document.getElementById("selected-color-input")?.value || "غير محدد";
 
- fetch("https://script.google.com/macros/s/AKfycbxIYpLMG1zU8kI1N7iSrijAzPEYp4YaIlpsVipDZk5HJCiGuOLj-bOxf070blPdm_dgSQ/exec", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ name, phone })
-})
-.then(res => res.json())
-.then(data => {
-  const orderCount = data.orderCount; // ✅ هنا تعرّف
-
   const message = `
-🛒 طلب جديد am store
---------------------------------
-📦 المنتج: ${currentSelectedProduct.name}
-🎨 اللون: ${colorName}
-👤 الاسم: ${name}
-📞 الهاتف: ${phone}
-📍 الولاية: ${wilaya}
-🏠 البلدية: ${baladiya}
-🔁 عدد الطلبات: ${orderCount}
-💰 المجموع: ${totalPrice} DZD
---------------------------------
+🛒 طلب جديد am store 
+----------------------------------------------------------------
+|📦 المنتج: ${currentSelectedProduct.name}                   
+|🎨 اللون: ${colorName}                                       
+|👤 الاسم: ${name}                                             
+|📞 الهاتف: ${phone}                                          
+|📍 الولاية: ${wilaya}                                           
+|🏠 البلدية: ${baladiya}                                      
+|💰 المجموع: ${totalPrice} DZD                                 
+----------------------------------------------------------------
 `;
-
   CHAT_IDS.forEach(chatId => {
-    fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text: message
-      })
-    });
-  });
-
+  fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      chat_id: chatId,
+      text: message
+    })
+  })
+   .then(res => res.json())
+ .then(data => {
   document.getElementById("success-message")
     .classList.remove("hidden");
 });
+});
+});
     // تهيئة التطبيق عند التحميل  
     window.onload = function () {
-
-  const url = "PUT_YOUR_SHEET_OR_API_URL_HERE";
-
-  fetch(url)
-    .then(res => res.json())
-    .then(data => {
-      document.getElementById("loading").classList.add("hidden");
-      document.getElementById("products-gallery").classList.remove("hidden");
-      renderProducts(data);
-    })
-    .catch(err => {
-      console.error("خطأ في جلب المنتجات:", err);
-    });
-          loadProductsFromSheet();
-            renderWilayaOptions();
-            };
-    
+    loadProductsFromSheet();
+  renderWilayaOptions();
+};
 </script>
   </a>
 <div id="products-gallery" class="hidden"></div>
@@ -774,8 +754,4 @@ document.getElementById("order-form").addEventListener("submit", function(e) {
   ✅ تم استلام طلبك، سوف نتواصل معك في أقرب وقت
 </div>
 </body>
-
 </html>
-
-
-
